@@ -63,16 +63,18 @@ def is_bad_compiler_error_post(post_text):
     post_text = post_text.lower()
     post_text = post_text.replace("&#39;", "'")
 
-    if "compile" not in post_text:
+    compile_words = ["compile", "compiling", "compilation"]
+    if not any(i in post_text for i in compile_words):
         return False
 
     # Decide whether it's a post about an error.
-    about_error = ["error", "not work", "doesn't work", "won't work"]
+    about_error = ["error", "not work", "doesn't work", "won't work",
+                   "not compil"]
     if not any(i in post_text for i in about_error):
         return False
 
     # Now, see if they've actually given us anything to work with.
-    provided_error = ["<code", "<pre", "<img"]
+    provided_error = ["<code", "<pre", "<img", ": error:"]
     if any(i in post_text for i in provided_error):
         return False
 
@@ -84,11 +86,13 @@ def test_is_bad_compiler_error_post():
     assert is_bad_compiler_error_post("compile doesn't work")
     assert is_bad_compiler_error_post("compile doesn&#39;t work")
     assert is_bad_compiler_error_post("not working compiler")
+    assert is_bad_compiler_error_post("not compiling")
     assert not is_bad_compiler_error_post("compilers are great")
     assert not is_bad_compiler_error_post("my code isn't working")
     assert not is_bad_compiler_error_post("not working compile message <pre>")
     assert not is_bad_compiler_error_post("not working compile message <code>")
     assert not is_bad_compiler_error_post("error compile message <img src>")
+    assert not is_bad_compiler_error_post("not compiling 90: error:")
 
 
 def cant_valgrind(post_text):
