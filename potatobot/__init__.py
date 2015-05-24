@@ -1,0 +1,1 @@
+from .potatobot import PotatoBot
