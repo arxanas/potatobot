@@ -1,13 +1,17 @@
 # About
 
-Ever use Piazza? You might get a lot of repetitive questions for which you'd
+Ever use [Piazza][piazza]? You might get a lot of repetitive questions for which you'd
 like to give the same advice, or point to the same resources, or so on.
+
+  [piazza]: https://piazza.com/
 
 PotatoBot is a Piazza bot which automatically responds to questions!
 
 ![PotatoBot comments on my compiler error](media/potatobot-compile-error.png)
 
-It's written for the computer science courses at University of Michigan.
+It's written for [the computer science courses at University of Michigan][eecs].
+
+  [eecs]: http://eecs.umich.edu/
 
 # Installation
 
