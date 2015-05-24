@@ -15,23 +15,9 @@ git submodule update --init --recursive
 
 # Usage
 
-Set up configuration values in `profile.py`:
+See `profile.py` for an example.
 
-```
-import piazza_api
-import potatobot
+# License
 
-piazza = piazza_api.Piazza(
-    email="potatobot",
-    password="gr34tp4$$w0rd"
-)
-bot = potatobot.PotatoBot(piazza)
-
-@bot.handle_post
-def some_handler(poster_username, post_text):
-    if "help" in poster_text:
-        return "It looks like you need help!"
-    # Implicitly return `None` -- don't respond.
-
-bot.run_forever()
-```
+PotatoBot is licensed under GPL v2. Additionally, when used for University of
+Michigan Piazza courses, PotatoBot accounts must have the full name "PotatoBot".
