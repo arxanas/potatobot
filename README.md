@@ -7,6 +7,12 @@ specifically written for EECS 281 at the University of Michigan.
 
 PotatoBot is written for Python 3.
 
+Make sure to init the `piazza-api` submodule:
+
+```
+git submodule update --init --recursive
+```
+
 # Usage
 
 Set up configuration values in `profile.py`:

@@ -1,0 +1,3 @@
+[submodule "piazza-api"]
+	path = piazza-api
+	url = git://github.com/arxanas/piazza-api.git
