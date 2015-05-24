@@ -133,7 +133,7 @@ def main():
 error was! (Or if you did, you didn't paste it into a code block so that we
 could read it easily.) We'll need to see the <em>full</em> compile error
 output, so please add it.</p>
-
+<p></p>
 <p>If you don't have a compiler error, sorry about that! I'm just a potato; I
 can't read very well.</p>
 """
@@ -146,11 +146,11 @@ can't read very well.</p>
 under valgrind? If you don't know how to use valgrind, read this: <a
 href="http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker">Valgrind
 is not a leak-checker</a>.</p>
-
+<p></p>
 <p>Once you've valgrinded your code, post the full valgrind output and the
 relevant lines of code. (Make sure that you compile <code>make debug</code> so
 that valgrind shows you line numbers.)</p>
-
+<p></p>
 <p>If valgrind doesn't show anything, that probably means you need better test
 cases!</p>
 """
