@@ -91,6 +91,28 @@ def test_is_bad_compiler_error_post():
     assert not is_bad_compiler_error_post("error compile message <img src>")
 
 
+def cant_valgrind(post_text):
+    """Whether or not the student is trying to debug a segfault but hasn't
+    tried valgrind."""
+    post_text = post_text.lower()
+
+    segfault_error = ["segv", "segfault"]
+    if not any(i in post_text for i in segfault_error):
+        return False
+
+    if "valgrind" in post_text:
+        return False
+
+    return True
+
+
+def test_cant_valgrind():
+    assert cant_valgrind("SIGSEGV but don't know why")
+    assert cant_valgrind("my program segfaults")
+    assert not cant_valgrind("segfault valgrind doesn't help")
+    assert not cant_valgrind("my program sucks")
+
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     bot = get_bot()
@@ -114,6 +136,23 @@ output, so please add it.</p>
 
 <p>If you don't have a compiler error, sorry about that! I'm just a potato; I
 can't read very well.</p>
+"""
+
+    @bot.handle_post
+    def learn_to_valgrind_please(poster_username, post_text):
+        if cant_valgrind(post_text):
+            return """
+<p>It looks like you're having an issue with a segfault! Have you run your code
+under valgrind? If you don't know how to use valgrind, read this: <a
+href="http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker">Valgrind
+is not a leak-checker</a>.</p>
+
+<p>Once you've valgrinded your code, post the full valgrind output and the
+relevant lines of code. (Make sure that you compile <code>make debug</code> so
+that valgrind shows you line numbers.)</p>
+
+<p>If valgrind doesn't show anything, that probably means you need better test
+cases!</p>
 """
 
     bot.run_forever()
