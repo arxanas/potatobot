@@ -112,10 +112,6 @@ class PotatoBot:
         for i in self._post_handlers:
             ret = i(post_username, post_text)
             if ret is not None:
-                # TODO: Remove
-                if "wkhan" not in post_username:
-                    continue
-
                 self._network.create_followup(post, ret)
 
     @ignore_error(KeyError)
