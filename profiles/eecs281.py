@@ -1,33 +1,7 @@
 import logging
-import os
 import re
-import sys
 
-from potatobot import PotatoBot
-
-
-def die(message):
-    sys.stderr.write("{}\n".format(message))
-    sys.exit(1)
-
-
-def get_bot():
-    config_sources = {
-        "email": "PBOT_EMAIL",
-        "password": "PBOT_PASSWORD",
-        "class_code": "PBOT_CLASS_CODE",
-    }
-
-    config = {}
-    for var, source in config_sources.items():
-        try:
-            config[var] = os.environ[source]
-        except KeyError:
-            die("`{}` must be set in the environment.".format(
-                source
-            ))
-
-    return PotatoBot.create_bot(**config)
+from potatobot.profile import profile
 
 
 def has_uniqname(display_name):
@@ -47,14 +21,6 @@ def has_uniqname(display_name):
     # Search for their uniqname anywhere in their Piazza display name.
     match = username_regex.search(display_name)
     return match is not None
-
-
-def test_has_uniqname():
-    assert not has_uniqname("Waleed Khan")
-    assert has_uniqname("Waleed Khan (wkhan)")
-    assert has_uniqname("(wkhan)")
-    assert not has_uniqname("(wkhan")
-    assert not has_uniqname("( wkhan )")
 
 
 def is_bad_compiler_error_post(post_text):
@@ -81,20 +47,6 @@ def is_bad_compiler_error_post(post_text):
     return True
 
 
-def test_is_bad_compiler_error_post():
-    assert is_bad_compiler_error_post("Compile error")
-    assert is_bad_compiler_error_post("compile doesn't work")
-    assert is_bad_compiler_error_post("compile doesn&#39;t work")
-    assert is_bad_compiler_error_post("not working compiler")
-    assert is_bad_compiler_error_post("not compiling")
-    assert not is_bad_compiler_error_post("compilers are great")
-    assert not is_bad_compiler_error_post("my code isn't working")
-    assert not is_bad_compiler_error_post("not working compile message <pre>")
-    assert not is_bad_compiler_error_post("not working compile message <code>")
-    assert not is_bad_compiler_error_post("error compile message <img src>")
-    assert not is_bad_compiler_error_post("not compiling 90: error:")
-
-
 def cant_valgrind(post_text):
     """Whether or not the student is trying to debug a segfault but hasn't
     tried valgrind."""
@@ -110,16 +62,9 @@ def cant_valgrind(post_text):
     return True
 
 
-def test_cant_valgrind():
-    assert cant_valgrind("SIGSEGV but don't know why")
-    assert cant_valgrind("my program segfaults")
-    assert not cant_valgrind("segfault valgrind doesn't help")
-    assert not cant_valgrind("my program sucks")
-
-
-def main():
+@profile("EECS281_PBOT")
+def eecs281_profile(bot):
     logging.basicConfig(level=logging.DEBUG)
-    bot = get_bot()
 
     @bot.handle_post
     def demand_uniqname(poster_username, post_text):
@@ -159,7 +104,7 @@ that valgrind shows you line numbers.)</p>
 cases!</p>
 """
 
-    bot.run_forever()
-
-if __name__ == "__main__":
-    main()
+    @bot.handle_post
+    def hi_me(poster_username, post_text):
+        if "wkhan" in poster_username:
+            return "Test post!"
