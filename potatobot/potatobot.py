@@ -49,15 +49,13 @@ class PotatoBot:
     the web page. That means that the first few will all be announcements. So
     you'll want to set this to something somewhat high."""
 
-    def __init__(self, piazza, user_profile, network):
+    def __init__(self, user_profile, network):
         """Constructor.
 
-        piazza: The Piazza instance. TODO: This may not be needed.
         user_profile: The Piazza API user profile instance.
         network: The Piazza network for the class.
 
         """
-        self._piazza = piazza
         self._user_profile = user_profile
         self._network = network
 
@@ -79,7 +77,7 @@ class PotatoBot:
         piazza.user_login(email=email, password=password)
         user_profile = piazza.get_user_profile()
         network = piazza.network(class_code)
-        return PotatoBot(piazza, user_profile, network)
+        return PotatoBot(user_profile, network)
 
     def _get_new_posts(self):
         """Get new posts on the Piazza class."""
