@@ -57,6 +57,10 @@ def test_has_uniqname():
     assert not has_uniqname("( wkhan )")
 
 
+def test_has_uniqname_ignores_special_usernames():
+    assert not has_uniqname("Piazza Team")
+
+
 def is_bad_compiler_error_post(post_text):
     """Detect whether the student is trying to post a message about a compiler
     error, but hasn't actually given us the compiler error."""
