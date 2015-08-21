@@ -37,6 +37,9 @@ def has_uniqname(display_name):
     display_name: Their display name on Piazza.
 
     """
+    if "Piazza Team" in display_name:
+        return True
+
     username_regex = re.compile(r"""
         \(
             [^) ]{1,8} # Their uniqname, in parentheses. There's a maximum
@@ -58,7 +61,7 @@ def test_has_uniqname():
 
 
 def test_has_uniqname_ignores_special_usernames():
-    assert not has_uniqname("Piazza Team")
+    assert has_uniqname("Piazza Team")
 
 
 def is_bad_compiler_error_post(post_text):
