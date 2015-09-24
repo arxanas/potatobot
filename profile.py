@@ -107,7 +107,7 @@ def cant_valgrind(post_text):
     tried valgrind."""
     post_text = post_text.lower()
 
-    segfault_error = ["segv", "segfault"]
+    segfault_error = ["segv", "segfault", "segmentation"]
     if not any(i in post_text for i in segfault_error):
         return False
 
@@ -120,6 +120,7 @@ def cant_valgrind(post_text):
 def test_cant_valgrind():
     assert cant_valgrind("SIGSEGV but don't know why")
     assert cant_valgrind("my program segfaults")
+    assert cant_valgrind("I have a segmentation issue")
     assert not cant_valgrind("segfault valgrind doesn't help")
     assert not cant_valgrind("my program sucks")
 
