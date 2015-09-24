@@ -11,6 +11,9 @@ def has_uniqname(display_name):
     display_name: Their display name on Piazza.
 
     """
+    if "Piazza Team" in display_name:
+        return True
+
     username_regex = re.compile(r"""
         \(
             [^) ]{1,8} # Their uniqname, in parentheses. There's a maximum
@@ -21,6 +24,18 @@ def has_uniqname(display_name):
     # Search for their uniqname anywhere in their Piazza display name.
     match = username_regex.search(display_name)
     return match is not None
+
+
+def test_has_uniqname():
+    assert not has_uniqname("Waleed Khan")
+    assert has_uniqname("Waleed Khan (wkhan)")
+    assert has_uniqname("(wkhan)")
+    assert not has_uniqname("(wkhan")
+    assert not has_uniqname("( wkhan )")
+
+
+def test_has_uniqname_ignores_special_usernames():
+    assert has_uniqname("Piazza Team")
 
 
 def is_bad_compiler_error_post(post_text):
@@ -103,8 +118,3 @@ that valgrind shows you line numbers.)</p>
 <p>If valgrind doesn't show anything, that probably means you need better test
 cases!</p>
 """
-
-    @bot.handle_post
-    def hi_me(poster_username, post_text):
-        if "wkhan" in poster_username:
-            return "Test post!"
