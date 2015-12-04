@@ -76,7 +76,7 @@ def is_bad_compiler_error_post(post_text):
 
     # Decide whether it's a post about an error.
     about_error = ["error", "not work", "doesn't work", "won't work",
-                   "not compil"]
+                   "not compil", "complain"]
     if not any(i in post_text for i in about_error):
         return False
 
@@ -94,6 +94,7 @@ def test_is_bad_compiler_error_post():
     assert is_bad_compiler_error_post("compile doesn&#39;t work")
     assert is_bad_compiler_error_post("not working compiler")
     assert is_bad_compiler_error_post("not compiling")
+    assert is_bad_compiler_error_post("compiler complaining")
     assert not is_bad_compiler_error_post("compilers are great")
     assert not is_bad_compiler_error_post("my code isn't working")
     assert not is_bad_compiler_error_post("not working compile message <pre>")
