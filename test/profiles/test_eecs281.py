@@ -1,4 +1,4 @@
-from profiles.eecs281 import (
+from potatobot.profiles.eecs281 import (
     cant_valgrind,
     has_uniqname,
     is_bad_compiler_error_post,
