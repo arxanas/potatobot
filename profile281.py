@@ -1,8 +1,8 @@
+import jsim
 import logging
 import os
 import re
 import sys
-import jsim
 
 from potatobot import PotatoBot
 
@@ -137,7 +137,7 @@ def test_cant_valgrind():
 
 
 def main():
-    logging.basicConfig(level=logging.WARNING)
+    logging.basicConfig(level=logging.DEBUG)
     bot = get_bot()
 
     @bot.handle_post
@@ -177,7 +177,6 @@ that valgrind shows you line numbers.)</p>
 <p>If valgrind doesn't show anything, that probably means you need better test
 cases!</p>
 """
-
     @bot.handle_post
     def check_for_duplicate_posts(post_info):
         if post_info.status != "private":

@@ -105,9 +105,10 @@ class PotatoBot:
 
         """
         post_history = post["history"][-1]
-        post_username_id = post_history["uid"]
         post_text = post_history["content"]
         post_status = post["status"]
+
+        post_username_id = post_history["uid"]
         post_username = self._network.get_users([post_username_id])
         post_username = post_username[0]["name"]
 
