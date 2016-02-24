@@ -5,7 +5,7 @@ import sys
 p = Piazza()
 p.user_login()
 
-course = p.network(argv[1])
+course = p.network(sys.argv[1])
 
 mapSave = {}
 
@@ -16,5 +16,5 @@ for post in posts:
 	print id
 	mapSave[id] = content
 
-with open("posts.json","wb") as f:
+with open("posts183.json","wb") as f:
 	f.write(json.dumps(mapSave))
