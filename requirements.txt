@@ -1,3 +1,4 @@
+jsim==1.2
 piazza-api==0.5.0
 py==1.4.27
 pytest==2.7.1

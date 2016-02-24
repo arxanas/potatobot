@@ -1,9 +1,11 @@
+import collections
 import functools
 import logging
 import time
 
 import piazza_api
 
+PostInfo = collections.namedtuple("PostInfo", ["username", "text", "id", "status"])
 
 class ignore_error:
     def __init__(self, *error_types):
@@ -102,15 +104,20 @@ class PotatoBot:
         post: The piazza_api post object.
 
         """
-        post_info = post["history"][-1]
-        post_username_id = post_info["uid"]
-        post_text = post_info["content"]
+        post_history = post["history"][-1]
+        post_text = post_history["content"]
+        post_status = post["status"]
 
+        post_username_id = post_history["uid"]
         post_username = self._network.get_users([post_username_id])
         post_username = post_username[0]["name"]
 
+        post_info = PostInfo(username=post_username,
+                             text=post_text,
+                             id=post["nr"],
+                             status=post_status)
         for i in self._post_handlers:
-            ret = i(post_username, post_text)
+            ret = i(post_info)
             if ret is not None:
                 self._network.create_followup(post, ret)
 
