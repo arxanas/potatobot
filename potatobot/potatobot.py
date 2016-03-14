@@ -104,7 +104,7 @@ class PotatoBot:
         post: The piazza_api post object.
 
         """
-        post_history = post["history"][-1]
+        post_history = post["history"][0]
         post_text = post_history["content"]
         post_status = post["status"]
 
