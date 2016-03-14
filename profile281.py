@@ -74,6 +74,9 @@ def is_bad_compiler_error_post(post_text):
     post_text = post_text.lower()
     post_text = post_text.replace("&#39;", "'")
 
+    if "#compiler-error" in post_text:
+        return True
+
     compile_words = ["compile", "compiling", "compilation"]
     if not any(i in post_text for i in compile_words):
         return False
@@ -93,6 +96,7 @@ def is_bad_compiler_error_post(post_text):
 
 
 def test_is_bad_compiler_error_post():
+    assert is_bad_compiler_error_post("regular post #compiler-error")
     assert is_bad_compiler_error_post("Compile error")
     assert is_bad_compiler_error_post("compile doesn't work")
     assert is_bad_compiler_error_post("compile doesn&#39;t work")
@@ -112,6 +116,9 @@ def cant_valgrind(post_text):
     tried valgrind."""
     post_text = post_text.lower()
 
+    if "#valgrind" in post_text:
+        return True
+
     segfault_error = ["segv", "sigsev", "sig sev",
                       "segfault", "seg fault",
                       "segmentation"]
@@ -125,6 +132,7 @@ def cant_valgrind(post_text):
 
 
 def test_cant_valgrind():
+    assert cant_valgrind("regular post #valgrind")
     assert cant_valgrind("SIG SEV but don't know why")
     assert cant_valgrind("SIGSEV but don't know why")
     assert cant_valgrind("SIGSEGV but don't know why")
@@ -157,6 +165,23 @@ error was! (Or if you did, you didn't paste it into a code block so that we
 could read it easily.) We'll need to see the <em>full</em> compile error
 output, so please add it.</p>
 <p></p>
+<p>Here are some guidelines you will need to follow if you are to receive help:
+
+<ul>
+  <li>Paste the <strong>FULL COMPILER ERROR</strong> from g++. Do not omit any
+  part.</li>
+  <li>Do not paste compiler errors from Visual Studio or Xcode, as they are
+  usually one line long and not informative. Please compile your code under
+  g++, as it provides infinitely more helpful compiler error messages.</li>
+  <li>Do not post part of the compiler error from g++ and say that the rest is
+  similar to it. That is not helpful and someone on staff will scowl at you.
+  Paste the entire compiler error output, even the parts you think are not
+  important.</li>
+  <li>Even if you think your question can be answered without looking at the
+  compiler error message, please post it anyways.</li>
+</ul>
+
+<p></p>
 <p>If you don't have a compiler error, sorry about that! I'm just a potato; I
 can't read very well.</p>
 """
@@ -170,9 +195,13 @@ under valgrind? If you don't know how to use valgrind, read this: <a
 href="http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker">Valgrind
 is not a leak-checker</a>.</p>
 <p></p>
+<p>Having no memory leaks does not indicate that your program is safe. Read the
+above article.</p>
+<p></p>
 <p>Once you've valgrinded your code, post the full valgrind output and the
 relevant lines of code. (Make sure that you compile <code>make debug</code> so
-that valgrind shows you line numbers.)</p>
+that valgrind shows you line numbers.) <strong>We will not answer your question
+until you post valgrind output</strong>.</p>
 <p></p>
 <p>If valgrind doesn't show anything, that probably means you need better test
 cases!</p>
