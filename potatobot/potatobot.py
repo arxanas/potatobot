@@ -44,7 +44,7 @@ def test_ignore_error():
 
 
 class PotatoBot:
-    POST_LIMIT = 20
+    POST_LIMIT = 50
     """The number of posts backward in time to search.
 
     Note that the posts are presented in the same order that you'd see them on
