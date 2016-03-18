@@ -125,7 +125,9 @@ class PotatoBot:
         # don't try to create an empty answer.
         if answers:
             self._network.create_instructor_answer(
-                post, "<p></p>".join(i.text for i in answers), revision=0)
+                post,
+                "<p></p><p>---</p><p></p>".join(i.text for i in answers),
+                revision=0)
 
         for i in followups:
             self._network.create_followup(post, i.text)
