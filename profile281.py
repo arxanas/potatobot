@@ -4,7 +4,7 @@ import os
 import re
 import sys
 
-from potatobot import PotatoBot
+from potatobot import Answer, PotatoBot
 
 JSIM_FILE = "eecs281jsim.json"
 JSIM_THRESHOLD = .25
@@ -31,7 +31,7 @@ def get_bot():
                 source
             ))
 
-    return PotatoBot.create_bot(post_as_answer=True, **config)
+    return PotatoBot.create_bot(**config)
 
 
 def has_uniqname(display_name):
@@ -151,15 +151,15 @@ def main():
     @bot.handle_post
     def demand_uniqname(post_info):
         if not has_uniqname(post_info.username):
-            return """
+            return Answer("""
 <p>Hi! It looks like you don't have your uniqname in your display name, as per
 @6. Please add it so that we can look you up on the autograder quickly.</p>
-"""
+""")
 
     @bot.handle_post
     def complain_about_compiler_errors(post_info):
         if is_bad_compiler_error_post(post_info.text):
-            return """
+            return Answer("""
 <p>Hi! It looks like you have a compiler error, but you didn't tell us what the
 error was! (Or if you did, you didn't paste it into a code block so that we
 could read it easily.) We'll need to see the <em>full</em> compile error
@@ -184,12 +184,12 @@ output, so please add it.</p>
 <p></p>
 <p>If you don't have a compiler error, sorry about that! I'm just a potato; I
 can't read very well.</p>
-"""
+""")
 
     @bot.handle_post
     def learn_to_valgrind_please(post_info):
         if cant_valgrind(post_info.text):
-            return """
+            return Answer("""
 <p>It looks like you're having an issue with a segfault! Have you run your code
 under valgrind? If you don't know how to use valgrind, read this: <a
 href="http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker">Valgrind
@@ -205,7 +205,8 @@ until you post valgrind output</strong>.</p>
 <p></p>
 <p>If valgrind doesn't show anything, that probably means you need better test
 cases!</p>
-"""
+""")
+
     @bot.handle_post
     def check_for_duplicate_posts(post_info):
         if post_info.status != "private":
@@ -217,13 +218,13 @@ cases!</p>
         sim_list = [i for i in sim_list if int(i[1]) < post_info.id]
         answers = ", ".join("@" + x[1] for x in sim_list[:JSIM_LIMIT])
         if sim_list:
-            return """
+            return Answer("""
 <p>Hi! It looks like this question has been asked before or there is a related post.
 Please look at these posts: {}</p>
 <p></p>
 <p>If you found your answer in one of the above, please mark your question as a note
 to resolve it / specify which one answered your question.</p>
-""".format(answers)
+""".format(answers))
 
     bot.run_forever()
 
