@@ -119,21 +119,18 @@ class PotatoBot:
                              text=post_text,
                              id=post["nr"],
                              status=post_status)
-        if self._post_as_answer:
-            final_answer = ""
-            for i in self._post_handlers:
-                ret = i(post_info)
-                if ret is not None:
-                    final_answer = "%s<p></p>%s" % (final_answer, i(post_info))
-            if final_answer and not [d for d in post[
-                    'change_log'] if d['type'] == 'i_answer']:
-                self._network.create_answer(post, final_answer, 0)
-        else:
-            for i in self._post_handlers:
-                ret = i(post_info)
-                if ret is not None:
-                    self._network.create_followup(post, ret)
 
+        responses = (i(post_info) for i in self._post_handlers)
+        responses = [i for i in responses if i is not None]
+        if not responses:
+            return
+        if self._post_as_answer:
+            if not self.has_answer(post):
+                self._network.create_answer(
+                    post, "<p></p>".join(responses), revision=0)
+        else:
+            for response in responses:
+                self._network.create_followup(post, response)
 
     @ignore_error(KeyError)
     def _should_ignore_post(self, post):
@@ -157,11 +154,15 @@ class PotatoBot:
                                  post["nr"]
                                  ))
                 return True
-        for i in post['change_log']:
-            if i['type'] == 'i_answer': # ignore if there was already an
-                return True             # instructor response
 
-        return False
+        return self.has_answer(post)
+
+    @staticmethod
+    def has_answer(post):
+        """
+        returns whether the given post already has an answer
+        """
+        return any(d for d in post["change_log"] if d["type"] == "i_answer")
 
     def handle_post(self, func):
         """Decorates a function to mark it as a handler for PotatoBot posts.
