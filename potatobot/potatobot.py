@@ -126,7 +126,7 @@ class PotatoBot:
             return
         if self._post_as_answer:
             if not self.has_answer(post):
-                self._network.create_answer(
+                self._network.create_instructor_answer(
                     post, "<p></p>".join(responses), revision=0)
         else:
             for response in responses:
