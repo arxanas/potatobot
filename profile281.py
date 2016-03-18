@@ -222,8 +222,7 @@ cases!</p>
 <p>Hi! It looks like this question has been asked before or there is a related post.
 Please look at these posts: {}</p>
 <p></p>
-<p>If you found your answer in one of the above, please mark your question as a note
-to resolve it / specify which one answered your question.</p>
+<p>If you found your answer in one of the above, please specify which one answered your question.</p>
 """.format(answers))
 
     bot.run_forever()
