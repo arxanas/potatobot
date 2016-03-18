@@ -51,22 +51,24 @@ class PotatoBot:
     the web page. That means that the first few will all be announcements. So
     you'll want to set this to something somewhat high."""
 
-    def __init__(self, piazza, user_profile, network):
+    def __init__(self, piazza, user_profile, network, post_as_answer):
         """Constructor.
 
         piazza: The Piazza instance. TODO: This may not be needed.
         user_profile: The Piazza API user profile instance.
         network: The Piazza network for the class.
+        post_as_answer: whether to post response as an answer
 
         """
         self._piazza = piazza
         self._user_profile = user_profile
         self._network = network
+        self._post_as_answer = post_as_answer
 
         self._post_handlers = []
 
     @classmethod
-    def create_bot(cls, email, password, class_code):
+    def create_bot(cls, email, password, class_code, post_as_answer=False):
         """Convenience method to create a PotatoBot instance and connect it to
         Piazza.
 
@@ -75,13 +77,14 @@ class PotatoBot:
         class_code: The class code that Piazza uses to identify the class. For
             example, the url might look like "piazza.com/class/12345abcde", so
             the class code would be "12345abcde".
+        post_as_answer: whether to post response as an answer
 
         """
         piazza = piazza_api.Piazza()
         piazza.user_login(email=email, password=password)
         user_profile = piazza.get_user_profile()
         network = piazza.network(class_code)
-        return PotatoBot(piazza, user_profile, network)
+        return PotatoBot(piazza, user_profile, network, post_as_answer)
 
     def _get_new_posts(self):
         """Get new posts on the Piazza class."""
@@ -116,10 +119,21 @@ class PotatoBot:
                              text=post_text,
                              id=post["nr"],
                              status=post_status)
-        for i in self._post_handlers:
-            ret = i(post_info)
-            if ret is not None:
-                self._network.create_followup(post, ret)
+        if self._post_as_answer:
+            final_answer = ""
+            for i in self._post_handlers:
+                ret = i(post_info)
+                if ret is not None:
+                    final_answer = "%s<p></p>%s" % (final_answer, i(post_info))
+            if final_answer and not [d for d in post[
+                    'change_log'] if d['type'] == 'i_answer']:
+                self._network.create_answer(post, final_answer, 0)
+        else:
+            for i in self._post_handlers:
+                ret = i(post_info)
+                if ret is not None:
+                    self._network.create_followup(post, ret)
+
 
     @ignore_error(KeyError)
     def _should_ignore_post(self, post):
@@ -143,6 +157,9 @@ class PotatoBot:
                                  post["nr"]
                                  ))
                 return True
+        for i in post['change_log']:
+            if i['type'] == 'i_answer': # ignore if there was already an
+                return True             # instructor response
 
         return False
 

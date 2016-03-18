@@ -31,7 +31,7 @@ def get_bot():
                 source
             ))
 
-    return PotatoBot.create_bot(**config)
+    return PotatoBot.create_bot(post_as_answer=True, **config)
 
 
 def has_uniqname(display_name):
@@ -209,11 +209,11 @@ cases!</p>
     @bot.handle_post
     def check_for_duplicate_posts(post_info):
         if post_info.status != "private":
-            
+
             jsim.save(JSIM_FILE, post_info.id, post_info.text)
-        
+
         sim_list = jsim.getSimilarities(JSIM_FILE, post_info.id, post_info.text, JSIM_THRESHOLD)
-        
+
         sim_list = [i for i in sim_list if int(i[1]) < post_info.id]
         answers = ", ".join("@" + x[1] for x in sim_list[:JSIM_LIMIT])
         if sim_list:
@@ -221,7 +221,7 @@ cases!</p>
 <p>Hi! It looks like this question has been asked before or there is a related post.
 Please look at these posts: {}</p>
 <p></p>
-<p>If you found your answer in one of the above, please mark your question as a note 
+<p>If you found your answer in one of the above, please mark your question as a note
 to resolve it / specify which one answered your question.</p>
 """.format(answers)
 
