@@ -5,6 +5,8 @@ import time
 
 import piazza_api
 
+from .responses import Answer, Followup
+
 PostInfo = collections.namedtuple("PostInfo", ["username", "text", "id", "status"])
 
 class ignore_error:
@@ -51,24 +53,22 @@ class PotatoBot:
     the web page. That means that the first few will all be announcements. So
     you'll want to set this to something somewhat high."""
 
-    def __init__(self, piazza, user_profile, network, post_as_answer):
+    def __init__(self, piazza, user_profile, network):
         """Constructor.
 
         piazza: The Piazza instance. TODO: This may not be needed.
         user_profile: The Piazza API user profile instance.
         network: The Piazza network for the class.
-        post_as_answer: whether to post response as an answer
 
         """
         self._piazza = piazza
         self._user_profile = user_profile
         self._network = network
-        self._post_as_answer = post_as_answer
 
         self._post_handlers = []
 
     @classmethod
-    def create_bot(cls, email, password, class_code, post_as_answer=False):
+    def create_bot(cls, email, password, class_code):
         """Convenience method to create a PotatoBot instance and connect it to
         Piazza.
 
@@ -77,14 +77,13 @@ class PotatoBot:
         class_code: The class code that Piazza uses to identify the class. For
             example, the url might look like "piazza.com/class/12345abcde", so
             the class code would be "12345abcde".
-        post_as_answer: whether to post response as an answer
 
         """
         piazza = piazza_api.Piazza()
         piazza.user_login(email=email, password=password)
         user_profile = piazza.get_user_profile()
         network = piazza.network(class_code)
-        return PotatoBot(piazza, user_profile, network, post_as_answer)
+        return PotatoBot(piazza, user_profile, network)
 
     def _get_new_posts(self):
         """Get new posts on the Piazza class."""
@@ -107,6 +106,36 @@ class PotatoBot:
         post: The piazza_api post object.
 
         """
+        post_info = self._get_post_info(post)
+        responses = (i(post_info) for i in self._post_handlers)
+        responses = [i for i in responses if i is not None]
+
+        answers = []
+        followups = []
+        for i in responses:
+            if isinstance(i, Answer):
+                answers.append(i)
+            elif isinstance(i, Followup):
+                followups.append(i)
+            else:
+                # Assume that it's a follow-up.
+                followups.append(Followup(i))
+
+        # Join all answers together since we can only post one answer. But
+        # don't try to create an empty answer.
+        if answers:
+            self._network.create_instructor_answer(
+                post, "<p></p>".join(i.text for i in answers), revision=0)
+
+        for i in followups:
+            self._network.create_followup(post, i.text)
+
+    def _get_post_info(self, post):
+        """Returns the `PostInfo` extracted from a post.
+
+        post: The post to extract information from.
+
+        """
         post_history = post["history"][0]
         post_text = post_history["content"]
         post_status = post["status"]
@@ -115,22 +144,10 @@ class PotatoBot:
         post_username = self._network.get_users([post_username_id])
         post_username = post_username[0]["name"]
 
-        post_info = PostInfo(username=post_username,
-                             text=post_text,
-                             id=post["nr"],
-                             status=post_status)
-
-        responses = (i(post_info) for i in self._post_handlers)
-        responses = [i for i in responses if i is not None]
-        if not responses:
-            return
-        if self._post_as_answer:
-            if not self.has_answer(post):
-                self._network.create_instructor_answer(
-                    post, "<p></p>".join(responses), revision=0)
-        else:
-            for response in responses:
-                self._network.create_followup(post, response)
+        return PostInfo(username=post_username,
+                        text=post_text,
+                        id=post["nr"],
+                        status=post_status)
 
     @ignore_error(KeyError)
     def _should_ignore_post(self, post):
@@ -171,7 +188,13 @@ class PotatoBot:
 
             @bot.handle_post
             def handle_post(poster_username, post_text):
-                return "response string" if some_condition() else None
+                if some_condition():
+                    return Followup("response string")
+                # Implicitly returning `None` here is okay.
+
+        The return type of the function should be a PotatoBot response, as
+        found in `potatobot.responses`. If it is not, it is assumed to be a
+        follow-up.
 
         func: The function to wrap.
 
