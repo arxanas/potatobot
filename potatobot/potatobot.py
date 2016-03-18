@@ -125,9 +125,8 @@ class PotatoBot:
         if not responses:
             return
         if self._post_as_answer:
-            if not self.has_answer(post):
-                self._network.create_answer(
-                    post, "<p></p>".join(responses), revision=0)
+            self._network.create_instructor_answer(
+                post, "<p></p>".join(responses), revision=0)
         else:
             for response in responses:
                 self._network.create_followup(post, response)
