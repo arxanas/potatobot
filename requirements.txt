@@ -1,5 +1,5 @@
 jsim==1.2
-piazza-api==0.5.1
+piazza-api==0.5.2
 py==1.4.27
 pytest==2.7.1
 requests==2.7.0
