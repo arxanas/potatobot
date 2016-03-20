@@ -4,7 +4,7 @@ import os
 import re
 import sys
 
-from potatobot import Answer, PotatoBot
+from potatobot import Answer, Followup, PotatoBot
 
 JSIM_FILE = "eecs281jsim.json"
 JSIM_THRESHOLD = .25
@@ -218,7 +218,7 @@ cases!</p>
         sim_list = [i for i in sim_list if int(i[1]) < post_info.id]
         answers = ", ".join("@" + x[1] for x in sim_list[:JSIM_LIMIT])
         if sim_list:
-            return Answer("""
+            return Followup("""
 <p>Hi! It looks like this question has been asked before or there is a related post.
 Please look at these posts: {}</p>
 <p></p>
