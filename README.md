@@ -17,11 +17,20 @@ It's written for [the computer science courses at University of Michigan][eecs].
 
 PotatoBot is written for Python 3.
 
-Make sure to init the `piazza-api` submodule:
+To launch PotatoBot, launch a PotatoBot profile with Python:
 
 ```
-git submodule update --init --recursive
+python profile281.py  # For EECS 281 at UM.
 ```
+
+You will want to set the following environment variables:
+
+  * `PBOT_EMAIL`: The email address of the PotatoBot account. (The PotatoBot
+    account should be an instructor for maximum effectiveness, so that it can
+repsond to private posts.)
+  * `PBOT_PASSWORD`: The password for the account.
+  * `PBOT_CLASS_CODE`: The class code on Piazza. You can find this in the Piazza
+    URL. It may look something like this: `iiw12cde6ghij`
 
 # Usage
 
