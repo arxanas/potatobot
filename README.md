@@ -39,4 +39,4 @@ See `profile.py` for an example.
 # License
 
 PotatoBot is licensed under GPL v2. Additionally, when used for University of
-Michigan Piazza courses, PotatoBot accounts must have the full name "PotatoBot".
+Michigan Piazza courses, please use the university PotatoBot account.
